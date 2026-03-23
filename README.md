@@ -51,7 +51,7 @@ stepfun/step-3.5-flash:free
 
 1. Clone or download this repository
 
-git clone https://github.com/your-username/jiat-ai-code-assistant.git
+git clone https://github.com/deshan-dev-maker/jiat-ai-code-assistant.git
 
 2. Open the project folder
 
