@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JIAT AI Code Assistant</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- CodeMirror CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css"
+  />
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold">JIAT AI Code Assistant</h1>
+      <p class="text-slate-300 mt-2">
+        Write or paste code, choose the language, and click Analyze.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+      <!-- Editor Panel -->
+      <div class="xl:col-span-3 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <div class="flex flex-col md:flex-row gap-3 mb-4">
+          <div class="w-full md:w-64">
+            <label for="languageSelect" class="block text-sm mb-2 text-slate-300">Language</label>
+            <select
+              id="languageSelect"
+              class="w-full rounded-xl bg-slate-950 border border-slate-700 p-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            >
+              <option value="Auto Detect">Auto Detect</option>
+              <option value="HTML">HTML</option>
+              <option value="CSS">CSS</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="Python">Python</option>
+              <option value="Java">Java</option>
+              <option value="C">C</option>
+              <option value="C++">C++</option>
+              <option value="C#">C#</option>
+              <option value="PHP">PHP</option>
+              <option value="Ruby">Ruby</option>
+              <option value="Go">Go</option>
+              <option value="Rust">Rust</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="block text-sm font-medium text-slate-200 mb-2">
+          Enter your code
+        </label>
+
+        <textarea id="codeInput" placeholder="Write or paste your code here..."></textarea>
+
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button
+            id="analyzeBtn"
+            class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold px-5 py-3 rounded-xl transition"
+          >
+            Analyze
+          </button>
+
+          <button
+            id="clearBtn"
+            class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-5 py-3 rounded-xl transition"
+          >
+            Clear
+          </button>
+
+          <button
+            id="copyFixedBtn"
+            class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-5 py-3 rounded-xl transition"
+          >
+            Copy Fixed Code
+          </button>
+        </div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <h2 class="text-xl font-semibold mb-4">Settings</h2>
+
+        <label for="apiKeyInput" class="block text-sm font-medium text-slate-200 mb-2">
+          OpenRouter API Key
+        </label>
+        <input
+          type="password"
+          id="apiKeyInput"
+          class="w-full rounded-xl bg-slate-950 border border-slate-700 text-slate-100 p-3 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          placeholder="sk-or-..."
+        />
+
+        <button
+          id="saveKeyBtn"
+          class="w-full mt-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-4 py-3 rounded-xl transition"
+        >
+          Save API Key
+        </button>
+
+        <p id="keyStatus" class="text-sm text-slate-400 mt-3">No API key saved yet.</p>
+
+        <div class="mt-6 p-4 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-300">
+          <p class="font-semibold text-white mb-2">Model</p>
+          <p>stepfun/step-3.5-flash:free</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <h3 class="text-lg font-semibold mb-4">Analysis / Answer</h3>
+        <div id="resultCards" class="space-y-4">
+          <div class="text-slate-400">Analysis results will appear here.</div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <h3 class="text-lg font-semibold mb-4">Corrected Code</h3>
+        <pre id="correctedCode" class="code-block">No corrected code yet.</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- CodeMirror JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/ruby/ruby.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/go/go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/rust/rust.min.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>
